@@ -14,8 +14,8 @@ from dotenv import load_dotenv
 load_dotenv()
 client = OpenAI()
 #for the assistant to work:
-initial_message = "I have Rhino3d opened already so that does not need to be mentioned."
-assistant_id = assistant_id = os.getenv('AssID')
+initial_message = "Hello."
+assistant_id = os.getenv('AssID')
 thread = None
 user_input = "" 
 
