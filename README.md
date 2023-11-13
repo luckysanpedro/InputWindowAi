@@ -9,3 +9,7 @@ pip install PyQt5
 pip install python-dotenv
 pip install openai
 pip install os
+
+in the .env add:
+OPENAI_API_KEY = "YOUR KEY"
+AssID  = "ASSIST_ID"
