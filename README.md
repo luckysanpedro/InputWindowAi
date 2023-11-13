@@ -13,3 +13,6 @@ pip install os
 in the .env add:
 OPENAI_API_KEY = "YOUR KEY"
 AssID  = "ASSIST_ID"
+
+Also:
+Go to open ai, create an assistant / and key and copy it into .env
