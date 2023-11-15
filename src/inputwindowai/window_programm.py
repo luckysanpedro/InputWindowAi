@@ -13,8 +13,8 @@ from PyQt5.QtGui import QDragEnterEvent, QDropEvent, QMovie
 import os
 
 # import assistant file:
-from inputwindowai import assistant_conversation
-
+from . import assistant_conversation
+from .instructions import InstructionsWidget
 # Assistant conversation utils:
 from dotenv import load_dotenv
 from openai import OpenAI
