@@ -69,7 +69,7 @@ def run_blocking_operations(user_input, assistant_id):
 
 def main(user_input, assistant_id):
     # Run the blocking operations
-    assistant_message = run_blocking_operations(user_input) 
+    assistant_message = run_blocking_operations(user_input)
     print("assistant_message:", assistant_message)
     return assistant_message
 
