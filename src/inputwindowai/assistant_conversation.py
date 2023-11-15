@@ -57,7 +57,7 @@ def initialize():
     thread = start_interact_with_assistant(client, assistant_id, initial_message)
 
 
-def run_blocking_operations(user_input):
+def run_blocking_operations(user_input, assistant_id):
     global thread
     if thread is None:
         initialize()
@@ -67,9 +67,9 @@ def run_blocking_operations(user_input):
     return assistant_message
 
 
-def main(user_input):
+def main(user_input, assistant_id):
     # Run the blocking operations
-    assistant_message = run_blocking_operations(user_input)
+    assistant_message = run_blocking_operations(user_input) 
     print("assistant_message:", assistant_message)
     return assistant_message
 
