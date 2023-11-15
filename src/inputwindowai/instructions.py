@@ -1,11 +1,25 @@
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QPushButton, QVBoxLayout, QComboBox, QDialog, QLabel, QLineEdit, QTextEdit, QDialogButtonBox
+from PyQt5.QtWidgets import (
+    QWidget,
+    QHBoxLayout,
+    QPushButton,
+    QVBoxLayout,
+    QComboBox,
+    QDialog,
+    QLabel,
+    QLineEdit,
+    QTextEdit,
+    QDialogButtonBox,
+)
+
 
 class InstructionsDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setAutoFillBackground(True)
-        self.setStyleSheet("color: black; background-color: rgba(200, 200, 255, 0.9); border-radius: 5px;")
+        self.setStyleSheet(
+            "color: black; background-color: rgba(200, 200, 255, 0.9); border-radius: 5px;"
+        )
 
         self.setWindowTitle("Add Instructions")
         self.layout = QVBoxLayout(self)
@@ -14,23 +28,30 @@ class InstructionsDialog(QDialog):
         self.layout.addWidget(self.name_label)
 
         self.name_field = QLineEdit()
-        self.name_field.setStyleSheet("color: black; background-color: rgba(200, 200, 255, 0.9); border-radius: 5px;")
+        self.name_field.setStyleSheet(
+            "color: black; background-color: rgba(200, 200, 255, 0.9); border-radius: 5px;"
+        )
         self.layout.addWidget(self.name_field)
 
         self.instructions_label = QLabel("Instructions")
         self.layout.addWidget(self.instructions_label)
 
         self.instructions_field = QTextEdit()
-        self.instructions_field.setStyleSheet("color: black; background-color: rgba(200, 200, 255, 0.9); border-radius: 5px;")
+        self.instructions_field.setStyleSheet(
+            "color: black; background-color: rgba(200, 200, 255, 0.9); border-radius: 5px;"
+        )
         self.layout.addWidget(self.instructions_field)
 
-        self.button_box = QDialogButtonBox(QDialogButtonBox.Save | QDialogButtonBox.Cancel)
+        self.button_box = QDialogButtonBox(
+            QDialogButtonBox.Save | QDialogButtonBox.Cancel
+        )
         self.button_box.accepted.connect(self.accept)
         self.button_box.rejected.connect(self.reject)
         self.layout.addWidget(self.button_box)
-        
+
     def get_data(self):
         return self.name_field.text(), self.instructions_field.toPlainText()
+
 
 class InstructionsWidget(QWidget):
     def __init__(self):
@@ -38,7 +59,9 @@ class InstructionsWidget(QWidget):
 
         self.instructions_dict = {}
         self.setAutoFillBackground(True)
-        self.setStyleSheet("color: black; background-color: rgba(200, 200, 255, 0.9); border-radius: 5px;")
+        self.setStyleSheet(
+            "color: black; background-color: rgba(200, 200, 255, 0.9); border-radius: 5px;"
+        )
 
         self.layout = QHBoxLayout(self)
 
@@ -47,7 +70,9 @@ class InstructionsWidget(QWidget):
         self.layout.addWidget(self.add_button)
 
         self.dropdown = QComboBox()
-        self.dropdown.setStyleSheet("color: black; background-color: rgba(200, 200, 255, 0.9);; border-radius: 5px;")
+        self.dropdown.setStyleSheet(
+            "color: black; background-color: rgba(200, 200, 255, 0.9);; border-radius: 5px;"
+        )
         self.layout.addWidget(self.dropdown)
 
         self.delete_button = QPushButton("Delete")
