@@ -1,3 +1,5 @@
+import os
+import datetime
 from PyQt5.QtWidgets import (
     QApplication,
     QWidget,
@@ -7,14 +9,17 @@ from PyQt5.QtWidgets import (
     QLabel,
     QPushButton,
     QSizePolicy,
+    QSpacerItem,
+    QComboBox,
 )
-from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QThread
-from PyQt5.QtGui import QDragEnterEvent, QDropEvent, QMovie
-import os
+from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QThread, QSize, QTimer
+from PyQt5.QtGui import QIcon, QPixmap, QDropEvent, QDragEnterEvent, QMovie
 
 # import assistant file:
-from . import assistant_conversation
+from .assistant_conversation import main as assistant_conversation_main
 from .instructions import InstructionsWidget
+from .audio_generator import main as audio_main
+
 # Assistant conversation utils:
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -26,13 +31,12 @@ client = OpenAI()
 initial_message = "Hi!"
 assistant_id = assistant_id = os.getenv("AssID_englisch")
 thread = None
-user_input = "" 
+user_input = ""
 assistant_message = "Hello, I am the assistant. I am here to help you."
 assistant_instructions = ""
 # Define the input path for the GIF in the background
-input_path_gif = 'hamsterbackground.gif'
-input_path_playbutton = os.getenv('input_path_playbutton')
-
+input_path_gif = "hamsterbackground.gif"
+input_path_playbutton = os.getenv("input_path_playbutton")
 
 
 # this class manages what happens when the user hits enter in the input field:
@@ -46,10 +50,11 @@ class Worker(QThread):
 
     def run(self):
         try:
-            result = assistant_conversation.main(self.user_input, self.assistant_id)
+            result = assistant_conversation_main(self.user_input, self.assistant_id)
             self.finished.emit(result)
         except Exception as e:
             self.finished.emit(str(e))
+
 
 class AudioWorker(QThread):
     def __init__(self, assistant_message):
@@ -58,8 +63,6 @@ class AudioWorker(QThread):
 
     def run(self):
         audio_main(self.assistant_message)
-
-
 
 
 # to accept control+enter as a new line:
@@ -166,7 +169,8 @@ class AssistantWindow(QWidget):
         self.input_layout.addStretch()
 
         self.input_field = CustomTextEdit(assistant_window=self)
-        self.input_field.setStyleSheet("""
+        self.input_field.setStyleSheet(
+            """
         border-radius: 4px;
         background-color: rgba(200, 200, 255, 0.9);
         border: 1px solid black;
@@ -179,12 +183,11 @@ class AssistantWindow(QWidget):
         # Add the input field to the main layout
         self.layout.addWidget(self.input_field)
 
-
-        #drag & drop everywhere:
-         # Enable drag and drop for this widget
+        # drag & drop everywhere:
+        # Enable drag and drop for this widget
         self.setAcceptDrops(True)
-    
-       #set the instructions widget:
+
+        # set the instructions widget:
         self.instructions_widget = InstructionsWidget()
         self.layout.addWidget(self.instructions_widget)
 
@@ -216,7 +219,7 @@ class AssistantWindow(QWidget):
         # Add a stretch to the right of the drag and drop label
         self.drag_and_drop_layout.addStretch()
 
-       # Create a layout for the output label and box
+        # Create a layout for the output label and box
         self.output_layout = QVBoxLayout()
         self.layout.addLayout(self.output_layout)
 
@@ -241,7 +244,8 @@ class AssistantWindow(QWidget):
         self.output_label.setStyleSheet(
             """
             border-radius: 10px;
-        """)
+        """
+        )
         self.save_button.setFixedSize(75, 25)  # Set the size of the button
 
         # Connect the clicked signal to the on_save_button_clicked method
@@ -256,13 +260,17 @@ class AssistantWindow(QWidget):
 
         # Create a QPushButton widget for the play button
         self.play_button = QPushButton()
-        self.play_button.setIcon(QIcon(QPixmap(input_path_playbutton)))  # Set the icon of the button
+        self.play_button.setIcon(
+            QIcon(QPixmap(input_path_playbutton))
+        )  # Set the icon of the button
         self.play_button.setIconSize(QSize(70, 60))  # Set the size of the icon
         self.play_button.setFixedSize(70, 60)  # Set the size of the button
-        self.play_button.setStyleSheet("""
+        self.play_button.setStyleSheet(
+            """
             border: none;
             background-color: transparent;
-        """)  # Remove the border of the button
+        """
+        )  # Remove the border of the button
 
         # Connect the clicked signal to the on_play_button_clicked method
         self.play_button.clicked.connect(self.on_play_button_clicked)
@@ -276,8 +284,6 @@ class AssistantWindow(QWidget):
         # Add a spacer item with a fixed height of 5px
         spacer_item = QSpacerItem(20, 5, QSizePolicy.Minimum, QSizePolicy.Fixed)
         self.output_layout.addItem(spacer_item)
-
-
 
         # Add a QTextEdit widget to display output text
         self.output_field = QTextEdit()
@@ -329,12 +335,14 @@ class AssistantWindow(QWidget):
 
         # Set the initial GIF based on the current selection in the dropdown menu
         self.handle_dropdown_selection(self.dropdown_menu.currentIndex())
-        #set style sheet for the dropdown menu:
-        self.dropdown_menu.setStyleSheet("""
+        # set style sheet for the dropdown menu:
+        self.dropdown_menu.setStyleSheet(
+            """
             background-color: rgba(55, 255, 255, 0.8);
             color: red;
             border-radius: 5px;
-        """)
+        """
+        )
 
         # Add the dropdown menu to the button layout
         self.button_layout.addWidget(self.dropdown_menu)
@@ -413,8 +421,7 @@ class AssistantWindow(QWidget):
             self.worker.finished.connect(self.on_worker_finished)
             # Start the worker thread
             self.worker.start()
-            
-            
+
             # Display the user input in the output field
 
     def on_worker_finished(self, result):
@@ -430,19 +437,18 @@ class AssistantWindow(QWidget):
         if index == 0:
             # Call the function for the English Assistant
             print("English Assistant")
-            input_path_gif = 'assets/hamsterenglisch.gif'
-            assistant_id = os.getenv('AssID_Englisch')
+            input_path_gif = "assets/hamsterenglisch.gif"
+            assistant_id = os.getenv("AssID_Englisch")
         elif index == 1:
             # Call the function for the Chemistry Assistant
             print("Chemistry Assistant")
-            input_path_gif = 'assets/hamsterbackground.gif'
-            assistant_id = os.getenv('AssID_Chemie')
+            input_path_gif = "assets/hamsterbackground.gif"
+            assistant_id = os.getenv("AssID_Chemie")
         elif index == 2:
             print("Julian's Atze")
-            input_path_gif = 'assets/atze.gif'
-            assistant_id = os.getenv('AssID_Atze')
+            input_path_gif = "assets/atze.gif"
+            assistant_id = os.getenv("AssID_Atze")
 
-            
         # Create a new QMovie object with the new GIF
         self.movie = QMovie(input_path_gif)
         # Set the new QMovie object to the QLabel
@@ -454,11 +460,13 @@ class AssistantWindow(QWidget):
         global assistant_message
         self.audio_worker = AudioWorker(assistant_message)
         self.audio_worker.start()
-        self.save_button.setStyleSheet("""
+        self.save_button.setStyleSheet(
+            """
             border-radius: 3px;
             color: white;
             background-color: black;
-        """)
+        """
+        )
 
     def on_save_button_clicked(self):
         # Get the current date and time
@@ -468,12 +476,14 @@ class AssistantWindow(QWidget):
         # Create the new filename
         new_filename = f"Audio_{datetime_str}.mp3"
         # Rename the file
-        os.rename('speech.mp3', new_filename)
-        self.save_button.setStyleSheet("""
+        os.rename("speech.mp3", new_filename)
+        self.save_button.setStyleSheet(
+            """
             border-radius: 3px;
             color: transparent;
             background-color: transparent;
-        """)
+        """
+        )
 
     def fact_check(self):
         global assistant_message
@@ -487,7 +497,6 @@ class AssistantWindow(QWidget):
         self.worker.start()
         # Call the display_output method
         self.display_output(assistant_message)
-        
 
     def on_save_text_button_clicked(self):
         # Get the current date and time
@@ -497,20 +506,26 @@ class AssistantWindow(QWidget):
         # Create the new filename
         new_filename = f"Answer_{datetime_str}.txt"
         # Write the assistant message to the file
-        with open(new_filename, 'w') as f:
+        with open(new_filename, "w") as f:
             f.write(assistant_message)
         # Change the background color of the save text button to green
-        self.save_text_button.setStyleSheet("""
+        self.save_text_button.setStyleSheet(
+            """
             border: none;
             background-color: green;
-        """)
+        """
+        )
         # Change the background color back to transparent after 500 milliseconds
-        QTimer.singleShot(500, lambda: self.save_text_button.setStyleSheet("""
+        QTimer.singleShot(
+            500,
+            lambda: self.save_text_button.setStyleSheet(
+                """
             border: none;
             background-color: transparent;
-        """))
+        """
+            ),
+        )
 
-   
 
 if __name__ == "__main__":
     app = QApplication([])
