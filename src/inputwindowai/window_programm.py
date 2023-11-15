@@ -525,17 +525,3 @@ class AssistantWindow(QWidget):
         """
             ),
         )
-
-
-if __name__ == "__main__":
-    app = QApplication([])
-
-    # Create an instance of AssistantWindow
-    assistant_window = AssistantWindow()
-
-    # Display the initial message in the output window
-    assistant_window.display_output(assistant_message)
-
-    assistant_window.show()
-
-    app.exec_()
